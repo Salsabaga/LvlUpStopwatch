@@ -1,4 +1,5 @@
 let savedTimes = [];
+let timesObj = {};
 const totalSavedTimes = [];
 
 let timeBegan = null,
@@ -28,6 +29,7 @@ async function clockTimer() {
 			? "0" + milisecs
 			: "00" + milisecs);
 }
+
 
 document.getElementById("start").addEventListener("click", () => {
 	if (timeBegan === null) {
@@ -71,22 +73,27 @@ document.getElementById("save").addEventListener("click", () => {
 });
 
 document.getElementById("save-times").addEventListener("click", () => {
-	let currentTime = new Date();
-	totalSavedTimes.push({
-		dateCreation: `${currentTime.getUTCDate()}/${
-			currentTime.getUTCMonth()
-		}/${currentTime.getUTCFullYear()}`,
-		savedTime: savedTimes,
-	});
-	historyArea.innerHTML = `<ul>${totalSavedTimes
-		.map((collection) => {
-			return `<li>${collection["dateCreation"]} : ${collection["savedTime"]}</li>`;
-		})
-		.join("")}</ul>`;
-	timerAPI();
-	savedTimes = [];
-
-	console.log(totalSavedTimes);
+	const d = new Date();
+	let dateFormat = `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${d.getUTCFullYear()}`
+	if(document.querySelector("#timer-label").value === ""){
+		alert("Please enter a label")
+		console.error("Fail")
+	}
+	else{
+		console.log("Success")
+		timesObj.timerLabel = document.querySelector("#timer-label").value;
+		timesObj.dateCreated = dateFormat;
+		timesObj.allTimes = savedTimes;
+		timerAPI();
+		console.log(timesObj);
+		timesObj = {};
+		savedTimes = [];
+		console.log(totalSavedTimes);
+		console.log(document.querySelector("#timer-label").value)
+		document.querySelector("#timer-label").value = "";
+		return false
+	}
+	
 });
 
 const timerAPI = async () => {
@@ -94,11 +101,14 @@ const timerAPI = async () => {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({
-			time: totalSavedTimes,
+			timerName: timesObj.timerLabel,
+			date: timesObj.dateCreated,
+			savedTime: timesObj.allTimes,
 		}),
 	};
 	const res = await fetch("/times", options);
 	const data = await res.json();
+	console.log(data);
 };
 
 document.getElementById("delete").addEventListener("click", () => {

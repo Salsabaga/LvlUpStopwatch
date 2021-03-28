@@ -6,21 +6,27 @@ const app = express();
 app.use(express.static("static"));
 app.use(express.json());
 
+app.set("view engine", "ejs")
 
 const savedTimes = [];
+let timerSaved;
 
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
 	res.sendFile(__dirname + "index.html");
 });
 
+app.get("/times", (req, res) =>{
+	res.render("times", {timeTemplate: savedTimes})
+})
+
 
 app.post("/times", (req, res) => {
-	const timerSaved = req.body;
+	timerSaved = req.body;
 	savedTimes.push(timerSaved);
-	console.log(savedTimes);
+	console.log(savedTimes)
 	res.json({
 		status: "Success",
-		times: timerSaved,
+		saveTimeCreation: timerSaved,
 	});
 });
 

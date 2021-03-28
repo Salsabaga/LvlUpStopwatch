@@ -1,0 +1,29 @@
+html{
+    font-family: "Poppins", sans-serif;
+    background-color: #8ac4d0 ;
+
+}
+
+
+
+#timer-container{
+    display: grid;
+    gap: 5%;
+    grid-template-columns: auto auto auto;
+}
+
+#timer-date {
+    background-color: #f4d160 ;
+    border: 2px solid blue;
+    text-align: center;
+}
+
+#timer-date > span{
+    margin: 25px;
+
+}
+
+#timer-times{
+    margin: 10px;
+    text-align: center;
+}
