@@ -1,10 +1,6 @@
-//
+let savedTimes = [];
+const totalSavedTimes = [];
 
-
-const savedTimes = [];
-const timer = document.querySelector("#timer-zone span");
-const timerInfo = timer.innerHTML;
-const saveBtn = document.querySelector("button#test");
 let timeBegan = null,
 	timeStopped = null,
 	stoppedDuration = 0,
@@ -22,15 +18,15 @@ async function clockTimer() {
 		milisecs = await timeElapsed.getUTCMilliseconds();
 
 	document.querySelector("#timer-zone span").innerHTML =
-		(min > 9 ? min : " 0" + min) +
-		" : " +
-		(sec > 9 ? sec : " 0" + sec) +
-		" : " +
+		(min > 9 ? min : "0" + min) +
+		":" +
+		(sec > 9 ? sec : "0" + sec) +
+		":" +
 		(milisecs > 99
 			? milisecs
 			: milisecs > 9
-			? " 0" + milisecs
-			: " 00" + milisecs);
+			? "0" + milisecs
+			: "00" + milisecs);
 }
 
 document.getElementById("start").addEventListener("click", () => {
@@ -56,32 +52,57 @@ document.getElementById("reset").addEventListener("click", () => {
 	timeBegan = null;
 	timeStopped = null;
 	stoppedDuration = 0;
-	document.querySelector("#timer-zone span").innerHTML = "Lets Start Again";
+	document.querySelector("#timer-zone span").innerHTML = "00:00:000";
+	timeArea.innerHTML = "";
+	savedTimes = [];
 });
+
+const timeArea = document.querySelector("#saved-times");
+const historyArea = document.querySelector("#history-times");
 
 document.getElementById("save").addEventListener("click", () => {
-	let node = document.createElement("LI"); // Create a <li> node
-	let p = document.querySelector("#timer-zone span").innerHTML;
-	let textnode = document.createTextNode(p); // Create a text node
-	node.appendChild(textnode);
-	document.getElementById("saved-times").appendChild(node);
-	savedTimes.push(document.querySelector("#timer-zone span").innerHTML);
-	console.log(document.querySelector("#timer-zone span").innerHTML);
+	const time = document.getElementById("timer-zone").innerText;
+	savedTimes.push(time);
+	timeArea.innerHTML = `${savedTimes
+		.map((times) => {
+			return `<div id="temp-time">${times}</div>`;
+		})
+		.join("")}`;
 });
-const options = {
-	method: "POST",
-	headers: { "Content-Type": "application/json" },
-	body: JSON.stringify({
-		time: timerInfo,
-	}),
-};
+
+document.getElementById("save-times").addEventListener("click", () => {
+	let currentTime = new Date();
+	totalSavedTimes.push({
+		dateCreation: `${currentTime.getUTCDate()}/${
+			currentTime.getUTCMonth()
+		}/${currentTime.getUTCFullYear()}`,
+		savedTime: savedTimes,
+	});
+	historyArea.innerHTML = `<ul>${totalSavedTimes
+		.map((collection) => {
+			return `<li>${collection["dateCreation"]} : ${collection["savedTime"]}</li>`;
+		})
+		.join("")}</ul>`;
+	timerAPI();
+	savedTimes = [];
+
+	console.log(totalSavedTimes);
+});
 
 const timerAPI = async () => {
-	const res = await fetch("/", options);
+	const options = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+			time: totalSavedTimes,
+		}),
+	};
+	const res = await fetch("/times", options);
 	const data = await res.json();
-	console.log(data);
 };
 
-saveBtn.addEventListener("click", () => {
-	timerAPI();
+document.getElementById("delete").addEventListener("click", () => {
+	timeArea.removeChild(timeArea.lastChild);
+	savedTimes.pop()
+	console.log(savedTimes)
 });
