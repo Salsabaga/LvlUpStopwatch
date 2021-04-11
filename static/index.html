@@ -14,32 +14,52 @@
 	</head>
 	<body>
 		<header></header>
-		<div id="timer-container">
-			<div id="study-container" class="timer-area">
-				<div id="study-title">
-					<h1>Test your skils in whatever you want!</h1>
-				</div>
-				<div id="start-timer" class="start-timer">
-					<button type="button" class="start-btns" id="start">Start</button>
-				</div>
-				<div id="work-btns">
-					<button class="timer-btns" id="reset">Reset</button>
-					<button class="timer-btns" id="stop">Stop</button>
-					<button class="timer-btns" id="save">Save</button>
-					<button class="timer-btns" id="delete">Delete</button>
-				</div>
-				<div id="study-area">
-					<div id="timer-zone"><span></span></div>
-				</div>
-				<div id="saved-times" class="timer-array">
-					<span>Name Your Time</span>
-				</div>
-				<div>
-					<input id="timer-label" type="text">
-					<button class="timer-btns" id="save-times">Save Your Times</button>
-				</div>
+		<div id="timer-title">
+			<h1>Online StopWatch</h1>
+		</div>
+		<div id="timer-content">
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Orci nulla
+				pellentesque dignissim enim.
+			</p>
+		</div>
+		<div id="btn-container" class="timer-area">
+			<div id="timer-design"></div>
+			<div id="study-area">
+				<div id="timer-zone"><span>00:00:000</span></div>
+			</div>
+			<div id="work-btns">
+				<div class="timer-btns" id="reset">Reset</div>
+				<div class="timer-btns" id="start">Start</div>
+				<div class="timer-btns" id="stop">Stop</div>
+				<div class="timer-btns" id="save">Save</div>
 			</div>
 		</div>
-		<div id="history-times"></div>
+		<div id="saved-container">
+			<div id="savedTimes-table">
+				<div id="savedTimes-header">
+					<div class="header">Time</div>
+					<div class="header">Split Time</div>
+					<div class="header">Comment</div>
+				</div>
+				<div id="savedTimes-body"></div>
+			</div>
+		</div>
+		<!-- Trigger Modal -->
+		<button id="modal-btn">Convert to CSV</button>
+		<!-- Modal Container -->
+		<div id="myModal" class="modal">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<textarea
+					name="time-content"
+					id="time-content"
+					cols="30"
+					rows="10"
+				></textarea>
+			</div>
+		</div>
 	</body>
 </html>

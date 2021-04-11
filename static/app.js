@@ -1,22 +1,23 @@
 let savedTimes = [];
-let timesObj = {};
-const totalSavedTimes = [];
-
 let timeBegan = null,
 	timeStopped = null,
 	stoppedDuration = 0,
-	starting = null;
+	starting = null,
+	timeElapsed = null,
+	min = 0,
+	sec = 0,
+	milisecs = 0;
 
 // You should keep track of the starting time then subtract that time from the current time using a Date:
 // The reason you were seeing the milliseconds "lagging" before was that setInterval is notorious for not firing exactly when you specify.
 // Update: You could keep track of how long the timer has "paused" between resets. Updated my answer to accommodate this.
 
-async function clockTimer() {
-	let currentTime = new Date(),
-		timeElapsed = new Date(currentTime - timeBegan - stoppedDuration),
-		min = await timeElapsed.getUTCMinutes(),
-		sec = await timeElapsed.getUTCSeconds(),
-		milisecs = await timeElapsed.getUTCMilliseconds();
+function clockTimer() {
+	let currentTime = new Date();
+	timeElapsed = new Date(currentTime - timeBegan - stoppedDuration);
+	min = timeElapsed.getUTCMinutes();
+	sec = timeElapsed.getUTCSeconds();
+	milisecs = timeElapsed.getUTCMilliseconds();
 
 	document.querySelector("#timer-zone span").innerHTML =
 		(min > 9 ? min : "0" + min) +
@@ -29,7 +30,6 @@ async function clockTimer() {
 			? "0" + milisecs
 			: "00" + milisecs);
 }
-
 
 document.getElementById("start").addEventListener("click", () => {
 	if (timeBegan === null) {
@@ -54,65 +54,138 @@ document.getElementById("reset").addEventListener("click", () => {
 	timeBegan = null;
 	timeStopped = null;
 	stoppedDuration = 0;
-	document.querySelector("#timer-zone span").innerHTML = "00:00:000";
+	elapsedMil = [];
+	elapsedMin = [];
+	elapsedSec = [];
+	elapsedTime = [];
+	timeDiff = 0;
 	timeArea.innerHTML = "";
 	savedTimes = [];
+	document.querySelector("#timer-zone span").innerHTML = "00:00:000";
 });
 
-const timeArea = document.querySelector("#saved-times");
-const historyArea = document.querySelector("#history-times");
+
+// const timeArea = document.querySelector("#savedTimes-time");
+// const elapsedTimeArea = document.querySelector("#savedTimes-elapsedTime");
+// const commentArea = document.querySelector("#savedTimes-comment");
+// const timeArea = document.querySelector("#saved-times");
+// const historyArea = document.querySelector("#history-times");
+const timeArea = document.querySelector("#savedTimes-body");
+
+let elapsedMin = [],
+	elapsedSec = [],
+	elapsedMil = [],
+	elapsedTime = [],
+	timeDiff = 0;
+
+function stopWatchTimeDiff(timeDiffArr) {
+	if (timeDiffArr.length === 2) {
+		timeDiff = Math.abs(timeDiffArr[0] - timeDiffArr[1]);
+		timeDiffArr.shift();
+	}
+	return timeDiff;
+}
 
 document.getElementById("save").addEventListener("click", () => {
 	const time = document.getElementById("timer-zone").innerText;
-	savedTimes.push(time);
-	timeArea.innerHTML = `${savedTimes
-		.map((times) => {
-			return `<div id="temp-time">${times}</div>`;
-		})
-		.join("")}`;
+	savedTimes.unshift(time);
+	elapsedMil.push(timeElapsed.getUTCMilliseconds());
+	elapsedSec.push(timeElapsed.getUTCSeconds());
+	elapsedMin.push(timeElapsed.getUTCMinutes());
+	elapsedTime.unshift(
+		(stopWatchTimeDiff(elapsedMin) > 9
+			? stopWatchTimeDiff(elapsedMin)
+			: "0" + stopWatchTimeDiff(elapsedMin)) +
+			":" +
+			(stopWatchTimeDiff(elapsedSec) > 9
+				? stopWatchTimeDiff(elapsedSec)
+				: "0" +
+				  stopWatchTimeDiff(elapsedSec) +
+				  ":" +
+				  (stopWatchTimeDiff(elapsedMil) > 99
+						? stopWatchTimeDiff(elapsedMil)
+						: stopWatchTimeDiff(elapsedMil) > 9
+						? "0" + stopWatchTimeDiff(elapsedMil)
+						: "00" + stopWatchTimeDiff(elapsedMil)))
+	);
+
+	// timeArea.innerHTML = savedTimes.map((time, index) => {
+	// 	const timeDiff = elapsedTime[index];
+	// 	timeRow = `<tr><td class="times total-time">${time}</td><td class="times split-time">${timeDiff}</td><td id="comment-col"><input class="comment-val" type="text"></td></tr>`
+	// 	return timeRow;
+	// });
+// });
+	const dataRow = document.createElement("div");
+	// Row for each dataset
+	const timeRow = document.createElement("div");
+	const elapsedTimeRow = document.createElement("div");
+	const commentRow = document.createElement("div");
+	// Add the class attributes to convert to CSV
+	timeRow.className = "total-time";
+	elapsedTimeRow.className = "split-time";
+	commentRow.className = "comment-val";
+	dataRow.className = "times"
+	// Create the data for each row
+	timeRow.innerText = savedTimes[length];
+	elapsedTimeRow.innerText = elapsedTime[length];
+	commentRow.appendChild(document.createElement("input"));
+	//Add to the row;
+	dataRow.append(timeRow, elapsedTimeRow, commentRow);
+	timeArea.insertAdjacentElement("afterbegin", dataRow);
 });
 
-document.getElementById("save-times").addEventListener("click", () => {
-	const d = new Date();
-	let dateFormat = `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${d.getUTCFullYear()}`
-	if(document.querySelector("#timer-label").value === ""){
-		alert("Please enter a label")
-		console.error("Fail")
-	}
-	else{
-		console.log("Success")
-		timesObj.timerLabel = document.querySelector("#timer-label").value;
-		timesObj.dateCreated = dateFormat;
-		timesObj.allTimes = savedTimes;
-		timerAPI();
-		console.log(timesObj);
-		timesObj = {};
-		savedTimes = [];
-		console.log(totalSavedTimes);
-		console.log(document.querySelector("#timer-label").value)
-		document.querySelector("#timer-label").value = "";
-		return false
-	}
+// Modal Screen
+
+const modalBtn = document.getElementById("modal-btn");
+const modal = document.getElementById("myModal");
+const span = document.getElementsByClassName("close")[0];
+const timeValues = document.getElementById("time-content");
+let totalTimesObj = {};
+
+
+modalBtn.addEventListener("click", () => {
+	const totalTimes = document.querySelectorAll(".total-time");
+	const splitTimes = document.querySelectorAll(".split-time");
+	const totalComments = document.querySelectorAll(".comment-val input");
+	const totalTimesSaved = [];
+
+	totalTimes.forEach((time, index) => {
+		return totalTimesSaved.push([
+			time.innerHTML,
+			splitTimes[index].innerHTML,
+			totalComments[index].value === "" ? "n/a" : totalComments[index].value,
+		]);
+	});
+	const timesToCsv = totalTimesSaved.map((t) => {
+		return {
+			TimeElapsed: t[0],
+			TimeSplit: t[1],
+			Comment: t[2],
+		};
+	});
+	let csv = "";
+	let header = Object.keys(timesToCsv[0]).join(",");
+	let csvValues = timesToCsv
+		.map((v) => {
+			return Object.values(v).join(",");
+		})
+		.join("\n");
+	csv += header + "\n" + csvValues;
+	console.log(csv);
+	timeValues.value = csv;
+	modal.style.display = "block";
 	
 });
 
-const timerAPI = async () => {
-	const options = {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({
-			timerName: timesObj.timerLabel,
-			date: timesObj.dateCreated,
-			savedTime: timesObj.allTimes,
-		}),
-	};
-	const res = await fetch("/times", options);
-	const data = await res.json();
-	console.log(data);
+
+
+span.addEventListener("click", () => {
+	modal.style.display = "none";
+});
+
+window.onclick = function (e) {
+	if (e.target == modal) {
+		modal.style.display = "none";
+	}
 };
 
-document.getElementById("delete").addEventListener("click", () => {
-	timeArea.removeChild(timeArea.lastChild);
-	savedTimes.pop()
-	console.log(savedTimes)
-});
