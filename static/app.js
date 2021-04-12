@@ -64,12 +64,6 @@ document.getElementById("reset").addEventListener("click", () => {
 	document.querySelector("#timer-zone span").innerHTML = "00:00:000";
 });
 
-
-// const timeArea = document.querySelector("#savedTimes-time");
-// const elapsedTimeArea = document.querySelector("#savedTimes-elapsedTime");
-// const commentArea = document.querySelector("#savedTimes-comment");
-// const timeArea = document.querySelector("#saved-times");
-// const historyArea = document.querySelector("#history-times");
 const timeArea = document.querySelector("#savedTimes-body");
 
 let elapsedMin = [],
@@ -89,32 +83,25 @@ function stopWatchTimeDiff(timeDiffArr) {
 document.getElementById("save").addEventListener("click", () => {
 	const time = document.getElementById("timer-zone").innerText;
 	savedTimes.unshift(time);
-	elapsedMil.push(timeElapsed.getUTCMilliseconds());
-	elapsedSec.push(timeElapsed.getUTCSeconds());
-	elapsedMin.push(timeElapsed.getUTCMinutes());
-	elapsedTime.unshift(
-		(stopWatchTimeDiff(elapsedMin) > 9
+	elapsedMil.push(milisecs);
+	elapsedSec.push(sec);
+	elapsedMin.push(min);
+	let splitMin =
+		stopWatchTimeDiff(elapsedMin) > 9
 			? stopWatchTimeDiff(elapsedMin)
-			: "0" + stopWatchTimeDiff(elapsedMin)) +
-			":" +
-			(stopWatchTimeDiff(elapsedSec) > 9
-				? stopWatchTimeDiff(elapsedSec)
-				: "0" +
-				  stopWatchTimeDiff(elapsedSec) +
-				  ":" +
-				  (stopWatchTimeDiff(elapsedMil) > 99
-						? stopWatchTimeDiff(elapsedMil)
-						: stopWatchTimeDiff(elapsedMil) > 9
-						? "0" + stopWatchTimeDiff(elapsedMil)
-						: "00" + stopWatchTimeDiff(elapsedMil)))
-	);
+			: `0${stopWatchTimeDiff(elapsedMin)}`;
+	let splitSec =
+		stopWatchTimeDiff(elapsedSec) > 9
+			? stopWatchTimeDiff(elapsedSec)
+			: `0${stopWatchTimeDiff(elapsedSec)}`;
+	let splitMil =
+		stopWatchTimeDiff(elapsedMil) > 99
+			? stopWatchTimeDiff(elapsedMil)
+			: stopWatchTimeDiff(elapsedMil) > 9
+			? `0${stopWatchTimeDiff(elapsedMil)}`
+			: `00${stopWatchTimeDiff(elapsedMil)}`;
+	elapsedTime.unshift(`${splitMin}:${splitSec}:${splitMil}`);
 
-	// timeArea.innerHTML = savedTimes.map((time, index) => {
-	// 	const timeDiff = elapsedTime[index];
-	// 	timeRow = `<tr><td class="times total-time">${time}</td><td class="times split-time">${timeDiff}</td><td id="comment-col"><input class="comment-val" type="text"></td></tr>`
-	// 	return timeRow;
-	// });
-// });
 	const dataRow = document.createElement("div");
 	// Row for each dataset
 	const timeRow = document.createElement("div");
@@ -124,7 +111,7 @@ document.getElementById("save").addEventListener("click", () => {
 	timeRow.className = "total-time";
 	elapsedTimeRow.className = "split-time";
 	commentRow.className = "comment-val";
-	dataRow.className = "times"
+	dataRow.className = "times";
 	// Create the data for each row
 	timeRow.innerText = savedTimes[length];
 	elapsedTimeRow.innerText = elapsedTime[length];
@@ -141,7 +128,6 @@ const modal = document.getElementById("myModal");
 const span = document.getElementsByClassName("close")[0];
 const timeValues = document.getElementById("time-content");
 let totalTimesObj = {};
-
 
 modalBtn.addEventListener("click", () => {
 	const totalTimes = document.querySelectorAll(".total-time");
@@ -174,10 +160,7 @@ modalBtn.addEventListener("click", () => {
 	console.log(csv);
 	timeValues.value = csv;
 	modal.style.display = "block";
-	
 });
-
-
 
 span.addEventListener("click", () => {
 	modal.style.display = "none";
@@ -188,4 +171,3 @@ window.onclick = function (e) {
 		modal.style.display = "none";
 	}
 };
-

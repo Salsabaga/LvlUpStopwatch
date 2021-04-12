@@ -1,7 +1,9 @@
-:root{
+:root {
 	--box-colour: hsl(0, 84%, 64%);
 	--btn-text: #e5e5e5;
 	--dark-contrast: #222831;
+	--light-contrast: #30475e;
+	--btn-hover: #1b2835;
 }
 
 html,
@@ -22,8 +24,8 @@ button:focus {
 
 #timer-title,
 #timer-content,
-#timer-zone span{
-	color: white;
+#timer-zone span {
+	color: var(--btn-text);
 	text-align: center;
 }
 
@@ -35,7 +37,6 @@ button:focus {
 	font-size: 1.5rem;
 	margin: 3rem 1rem;
 }
-
 
 #timer-zone {
 	background-color: var(--box-colour);
@@ -57,25 +58,6 @@ button:focus {
 	}
 }
 
-@keyframes fadeOut {
-	from {
-		opacity: 1;
-	}
-	to {
-		opacity: 0;
-	}
-}
-
-@keyframes fadeColourin {
-	from {
-		background-color: #30475e;
-	}
-
-	to {
-		background-color: #1b2835;
-	}
-}
-
 .timer-area {
 	text-align: center;
 }
@@ -88,23 +70,20 @@ button:focus {
 
 #saved-container #savedTimes-table #savedTimes-header {
 	position: sticky;
-	background-color: #30475e;
-	color: #e5e5e5;
+	background-color: var(--light-contrast);
+	color: var(--btn-text);
 	padding: 2rem 0;
-	font-size: 1.5rem;
-
+	font-size: 3rem;
+	font-weight: 500;
 }
-
 
 tr #temp-time:first-child {
 	animation: fadein 0.5s;
 }
 
-
 #savedTimes-body > div:nth-child(even) {
 	background-color: #adadad;
 }
-
 
 #timer-design {
 	width: 80%;
@@ -121,11 +100,12 @@ tr #temp-time:first-child {
 	background-color: black;
 }
 
-#savedTimes-header{
+#savedTimes-header {
 	text-align: center;
 }
 
-.times, .f-times {
+.times,
+.f-times {
 	padding: 2rem 0;
 	font-size: 1.5rem;
 }
@@ -140,7 +120,7 @@ tr #temp-time:first-child {
 }
 
 #work-btns {
-	background-color: #30475e;
+	background-color: var(--light-contrast);
 	width: 80%;
 	margin: 0 auto;
 	display: flex;
@@ -150,21 +130,20 @@ tr #temp-time:first-child {
 
 .timer-btns {
 	padding: 0.5rem 3.22rem;
-	background-color: #30475e;
+	background-color: var(--light-contrast);
 	color: white;
 	font-size: 2rem;
 	font-weight: 700;
 	user-select: none;
 	-webkit-user-select: none;
+	transition-duration: 0.5s;
+	transition-timing-function: ease-in-out;
 }
 
 .timer-btns:hover {
 	background-color: #1b2835;
-	animation-name: fadeColourin;
-	animation-duration: 0.5s;
 	cursor: pointer;
 }
-
 
 /* Modal CSS */
 
@@ -183,14 +162,27 @@ tr #temp-time:first-child {
 }
 
 /* Modal Content */
-#modal-btn{
-	padding: 2rem 4rem;	
+#modal-btn {
+	padding: 2rem 4rem;
 	align-self: center;
 	font-size: 2rem;
 	background-color: var(--box-colour);
 	color: var(--btn-text);
 	border: none 0;
 	cursor: pointer;
+	border-radius: 2%;
+	transition-timing-function: ease-in-out;
+	transition-duration: 0.5s;
+}
+
+#modal-btn:hover {
+	background-color: hsl(0, 50%, 50%);
+}
+
+.modal-header {
+	padding: 2px 16px;
+	background-color: #5cb85c;
+	color: white;
 }
 
 .modal-content {
@@ -198,7 +190,7 @@ tr #temp-time:first-child {
 	margin: auto;
 	padding: 20px;
 	border: 1px solid #888;
-	width: 80%;
+	width: 60%;
 }
 
 /* Close Button */
@@ -222,7 +214,8 @@ textarea {
 
 /* Fixing the Saved Times Tables by changing it to the Div table */
 
-#savedTimes-body > div, #savedTimes-header{
+#savedTimes-body > div,
+#savedTimes-header {
 	display: grid;
 	grid-template-columns: 33% 33% 33%;
 	text-align: center;
